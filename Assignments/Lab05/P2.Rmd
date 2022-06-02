@@ -1,0 +1,141 @@
+---
+title: "Problem 2"
+author: "Yufei Yin"
+output: pdf_document
+---
+
+# Question 2a, (2 points): 
+
+Write an R function named boxoffice. This function should take no arguments and return a dataframe with columns Name, BoxOffice, and PerWeek, and 10 rows for each of the day's top movies on the website https://www.imdb.com/chart/boxoffice (i.e., the function should scrape this website). The PerWeek column should contain the gross box office revenue (i.e., the second column) divided by the number of weeks the movie's been running for. Provide the R code.
+
+```{r,warning=FALSE,message=FALSE}
+library(rvest)
+library(tidyverse)
+library(httr)
+boxoffice = function(){
+  df = data.frame(Title = rep(NA,10),    
+                  BoxOffice = rep(NA,10),
+                  PerWeek = rep(NA,10))
+  movie_url = "https://www.imdb.com/chart/boxoffice"
+  movie_table = read_html("https://www.imdb.com/chart/boxoffice")
+  length(html_nodes(movie_table, "table"))
+  zz = html_table(html_nodes(movie_table, "table")[[1]])
+  df$Title = zz[,2]
+  df$BoxOffice = zz[,4]
+  df$PerWeek = paste0("$",sprintf("%.2f",parse_number(zz[,4])/zz[,5]),"M")
+  return(df)
+}
+
+boxoffice()
+```
+
+\newpage
+
+# Question 2b, (3 points + 2 bonus points): 
+
+Modify the function you wrote in the first part of this question to add a column named RT. The values of this column should be the rating that the movie received on https://www.rottentomatoes.com (you may use the tomatometer or the audience score). Note that you will have to construct the URL for the movie in order to scrape it from the rotten tomatoes website. For example, the movie Onward is returned in the IMDB boxoffice page with title Onward (i.e., with a capital O) and the corresponding rotten tomatoes website is https://www.rottentomatoes.com/m/onward/ with a lower case o. Provide the modified R function. Your solution can be approximate: it need not work for all movie titles (for example, special characters or in the movie title or long movie titles may be challenges, but it's likely that you can get large coverage without handling it). Use NA (not available) to indicate ratings of movies that you can't match. Bonus points will be awarded for exceptionally large coverage.
+
+```{r}
+url = 'https://www.rottentomatoes.com/m/raya_and_the_last_dragon'
+(score = read_html(url) %>% 
+        html_nodes("score-board") %>% 
+        html_attr("audiencescore"))
+```
+
+![score](D:/Simon Fraser University\2021 spring\STAT 240\Assignments\Lab05\score.png)
+(The current score may be different than it appeared in the screenshot)
+
+I figured out how to use functions from `rvest` packages to extract audience scores, but when i apply it to a for loop i get warning message "closing unused connection", i guess it related to trycatch() function; however, i can not solve it, so i choose to use regular expression to extract audience score.
+
+
+```{r}
+# modified boxoffice function
+boxoffice = function(){
+  # add new column RT
+  df = data.frame(Title = rep(NA,10),    
+                  BoxOffice = rep(NA,10),
+                  PerWeek = rep(NA,10),
+                  RT = rep(NA,10))
+  movie_url = "https://www.imdb.com/chart/boxoffice"
+  movie_table = read_html("https://www.imdb.com/chart/boxoffice")
+  length(html_nodes(movie_table, "table"))
+  zz = html_table(html_nodes(movie_table, "table")[[1]])
+  df$Title = zz[,2]
+  df$BoxOffice = zz[,4]
+  df$PerWeek = paste0("$",sprintf("%.2f",parse_number(zz[,4])/zz[,5]),"M")
+  
+  # movies name
+  name = df$Title
+  
+  # change to lower case
+  lowercase.name = str_to_lower(name)
+  
+  # replace space with undercore
+  underscore.name = str_replace_all(lowercase.name, " ", "_")
+  
+  # remove colon
+  no.colon.name = str_replace_all(underscore.name, ":","")
+  
+  # paste to rottentomatoes website address
+  url = paste0('https://www.rottentomatoes.com/m/', no.colon.name)
+  
+  # get current year
+  currentyear = str_sub(Sys.Date(),1,4)
+  
+  # get last year
+  lastyear = as.character(as.numeric(currentyear)-1)
+  
+  # for loop
+  score = NULL
+  # normal case
+  for (i in 1:10){
+      score[i] =  read.url(url[i])   
+  }
+  # movie name + current year
+  url2 = paste0(url,"_",currentyear)
+  for (i in 1:10){
+    if (!is.na(read.url(url2[i]))){
+      score[i] =  read.url(url2[i])   
+    }
+  }
+  
+  # movie name + last year
+  url3 = paste0(url,"_",lastyear)
+  for (i in 1:10){
+    if (!is.na(read.url(url3[i]))){
+      score[i] =  read.url(url3[i])   
+    }
+  }
+
+  # RT
+  df$RT = str_c(score,"%")
+  
+  return(df)
+}
+```
+
+\newpage
+```{r}
+# get hint from
+# https://stackoverflow.com/questions/12193779/how-to-write-trycatch-in-r #
+
+# read.url() will return audience score if it runs properly, otherwise, it will return NA.
+read.url <- function(url){
+  tryCatch(
+    expr = {
+      s = GET(url)
+      s = content(s, "text")
+      s = str_replace_all(s, '[[:space:]]','')
+      match = str_match_all(s, "audiencescore=\"(.*?)\"class")
+      score = match[[1]][2]
+      return(score)
+    },
+    error = function(e){
+      return(NA)
+    }
+  )
+}
+
+boxoffice()
+```
+
