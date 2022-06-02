@@ -1,0 +1,48 @@
+---
+title: "Question 2"
+author: "Yufei Yin"
+output: pdf_document
+---
+
+# Question 2
+
+* Further modify your code so that instead of initializing the cluster assignments of the data items randomly, instead assign data item i to cluster ((i-1)%%K)+1. (i.e., if K = 3 and there are 7 data items, the initialization assigns the data items in order to 1, 2, 3, 1, 2, 3, 1).
+
+*Run this further modified version of kmedians on the parkinsons dataset with K = 3, and iters = 1000. Report the locations of the 3 clusters.
+
+```{r}
+kmedians = function(x, k, iters){
+  N = dim(x)[1] 
+  D = dim(x)[2] 
+  
+  centres = matrix(NA, k, D)
+  clusters = rep(NA, N)
+  
+  for (i in 1:N){
+    clusters[i] = ((i-1) %% k)+1
+  }
+  
+  for (iter in 1:iters){
+    for (k in 1:k){
+      for (d in 1:D){
+        centres[k, d] = median(x[clusters == k, d]) 
+      }
+    }
+    distanceMatrix <- matrix(NA, nrow=N, ncol=k)
+    for(i in 1:k) {
+      distanceMatrix[,i] <- rowSums(t(abs(t(x)-centres[i,])))
+    }
+    clusters <- apply(distanceMatrix, 1, which.min)
+    centres <- apply(x, 2, tapply, clusters, median)
+  }
+  return(list(locations=centres, assignment=clusters))
+}
+```
+
+```{r}
+data = read.table(file = 'parkinsons.data', sep = ',', header = TRUE)
+data = data[,-1]
+res = kmedians(x = data, k = 3, iters = 1000)
+res$locations
+```
+
