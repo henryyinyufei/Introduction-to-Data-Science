@@ -1,0 +1,19 @@
+---
+title: "Problem2"
+author: "Yufei Yin"
+output: pdf_document
+---
+
+```{r, echo=FALSE}
+library(RSQLite)
+dbcon = dbConnect(SQLite(), dbname = "D:\\Simon Fraser University\\2021 spring\\STAT 240\\Labs\\lab3\\lab03.sqlite")
+```
+
+# Question 2a, (4 points): 
+Use an SQL command to provide the unique set of distinct of heights of pokemon from the Height_m column of the Pokem table in the database, in descending order, providing your result with one height per line.
+
+```{r}
+query = "SELECT DISTINCT Height_m FROM Pokem ORDER BY Height_m DESC"
+dbGetQuery(dbcon, query)
+```
+

@@ -1,0 +1,34 @@
+---
+title: "Problem1"
+author: "Yufei Yin"
+output: pdf_document
+---
+
+```{r, echo=FALSE}
+library(RSQLite)
+dbcon = dbConnect(SQLite(), dbname = "D:\\Simon Fraser University\\2021 spring\\STAT 240\\Labs\\lab3\\lab03.sqlite")
+```
+
+
+# Question 1a, (3 points): 
+
+How many distinct years are present among the medals listed in the WinterO table in lab03.sqlite?
+
+```{r}
+query = "SELECT DISTINCT year FROM WinterO"
+dbGetQuery(dbcon, query)
+```
+
+# Question 1b, (3 points): 
+
+Provide code that can calculate the value you found in the previous section, making use of the DISTINCT SQL command.
+
+```{r}
+query = "SELECT COUNT(DISTINCT year) FROM WinterO"
+dbGetQuery(dbcon, query)
+```
+
+
+
+
+

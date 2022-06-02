@@ -1,0 +1,40 @@
+---
+title: "Problem3"
+author: "Yufei Yin"
+output: pdf_document
+---
+
+```{r, echo=FALSE}
+library(RSQLite)
+dbcon = dbConnect(SQLite(), dbname = "D:\\Simon Fraser University\\2021 spring\\STAT 240\\Labs\\lab3\\lab03.sqlite")
+```
+
+# Question 3a, (6 points): 
+
+Make a hisogram of the combat power (CP) of these pokoemon. 
+
+```{r}
+query = "SELECT * FROM Vanpoke"
+Vanpoke = dbGetQuery(dbcon, query)
+hist(x = Vanpoke$cp,
+     xlab = "combat power (CP)",
+     main = "Histogram of combat power")
+```
+
+
+# Question 3b, (6 points): 
+
+Make a kernel density plot of the combat power of these pokeemon.
+
+```{r}
+plot(density(Vanpoke$cp),
+     xlab = "combat power (CP)",
+     main = "kernel density plot of the combat power")
+```
+
+
+
+
+
+
+
