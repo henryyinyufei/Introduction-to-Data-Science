@@ -1,0 +1,102 @@
+---
+title: "Question 1"
+author: "Yufei Yin"
+output: pdf_document
+---
+
+# Question 1 
+
+## a) 
+
+What does JSON stand for, in the context of databases? (1 mark)
+
+JSON stands for JavaScript Object Notation. JSON is often used for the storage and exchange of human-readable data.
+
+\bigskip
+
+## b)
+
+Is JSON considered to be a NoSQL database format? (1 mark)
+
+JSON is mostly applied to programming languages. But, there is also NoSQL systems. NoSQL systems use JSON format to store data. Some of the NoSQL systems use JSON format are - MongoDB, CoucheDB etc.
+
+\bigskip
+
+## c)
+
+List a drawback of, and a benefit of, using a NoSQL database format. (2 marks)
+
+* drawback
+
+NoSQL are very new compared to Relational Databases, which means that are far less stable and may have a lot less functionalities.
+
+* benefit
+
+Massive volumes of data are easily handled by NoSQL databases.
+
+\bigskip
+
+## d)
+
+List a drawback and benefit of using a relational database such as MySQL. (2 marks)
+
+* drawback
+
+Memory usage increased - If we use many stored procedures, the memory usage of every connection that is using those stored procedures will increase substantially.
+
+* benefit
+
+MySQL Stored procedures are fast because the MySQL server takes some advantage of caching. Another reason for its speed is that it makes the reduction in network traffic. Suppose, if we have a repetitive task that requires checking, looping, multiple statements, and no user interaction, does it with a single call to a procedure that's stored on the server.
+
+\bigskip
+
+## e)
+
+Which of the following files are valid JSON files? (4 marks)
+
+```{text}
+file1.json:
+  [
+      { a : 1, b : 2, c : 3 }
+  ]
+
+file2.json:
+  {
+    [ a : 1, b : 2, c : 3 ]
+  }
+
+file3.json:
+  [
+    { "a" : 1, "b" : 2, "c" : 3 }
+  ]
+
+file4.json:
+  {
+    [ "a" : 1, "b" : "2", "c" : 3 ]
+  }
+```
+
+
+file3.json is the valid JSON file.
+
+Curly brackets { } embrace objects.
+
+Square brackets [ ] enclose arrays. An array is an ordered sequence of objects or values.
+
+rules for keys and values:
+
+1. Keys are placed in double quotes.
+
+2. Keys and values are always separated by a colon.
+
+3. Key/value pairs are separated by commas.
+
+4. Values in an array are separated by commas.
+
+
+
+
+
+
+
+

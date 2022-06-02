@@ -1,0 +1,19 @@
+---
+title: "Question 3"
+author: "Yufei Yin"
+output: pdf_document
+---
+
+# Questioin 3
+
+In 240 characters or less, mention a field that you are interested in, and describe how data science will make an impact on that field. (5 marks)
+
+\bigskip
+
+I am interested in Esports. 
+
+Over the years, companies began to set up bigger and bigger tournaments for cash prizes. with the advance of technology and interconnectedness of the internet, Esports have risen into a billion industry in recent years. 
+
+Much like real life sports, Esports are analyzed, and statistics are gathered about the game, strategies, and players to make better strategical decisions, popularize players, how to profit more from events, and are used to hype up the crowd; moreover, because Esports are virtual, it is easier to automatically gather and compile statistics from matches. For example, gameplay statistics are easy to find on website such as mobalytics.gg, op.gg etc.
+
+Esports also tend to have much more complex interactions in terms of game mechanics and balancing the game and use gameplay statistics to constantly update the game. When playing competitive games, players are usually made aware of certain statistics about the game itself or about their own gameplay that they can easily access to make decisions as to which character or map to pick or to help them strategize when playing the game. For example, it is possible for data scientists to predict the win rate if they have enough information. 

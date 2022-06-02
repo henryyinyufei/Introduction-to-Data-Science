@@ -1,0 +1,44 @@
+---
+title: "Question 2"
+author: "Yufei Yin"
+output: pdf_document
+---
+
+# Question 2
+
+Consider the following R code and fill in the blanks between # <<< and # >>> so that the postcondition is satisfied. Consider using the packages rjson and sqldf. (5 marks)
+
+```{r, message=FALSE}
+library(rjson)
+library(sqldf)
+
+convert = function(infile, outfile, name = "test"){
+  
+  data = fromJSON(file = infile)
+
+# <<<  
+  result = data.frame(matrix(unlist(data[-1]), nrow=length(data[-1]), byrow=TRUE))
+  names(result) = data[[1]]
+# >>>  
+
+  db = dbConnect(SQLite(), dbname = outfile)
+  dbWriteTable(conn = db,
+               name = name,
+               value = result,
+               row.names = FALSE,
+               overwrite = TRUE)
+}
+
+# test convert() function
+
+db = dbConnect(SQLite(), dbname = 'outfile.sqlite')
+dbListTables(db)
+
+convert(infile = 'infile.json',
+        outfile = 'outfile.sqlite',
+        name = 'Question2')
+
+dbReadTable(db, 'Question2')
+dbDisconnect(db)
+```
+

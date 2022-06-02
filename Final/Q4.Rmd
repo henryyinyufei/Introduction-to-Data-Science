@@ -1,0 +1,21 @@
+---
+title: "Question 4"
+author: "Yufei Yin"
+output: pdf_document
+---
+
+# Question 4
+
+Consider a dataset of real values specified by the following variable in R:
+$$x = c(0.2, 0.25, 0.1, 0.7, 0.6, 0.6, 0.61, 0.8)$$
+
+Plot a histogram of the dataset such that the histogram has 4 equally sized bins spanning exactly the range of x. The bins must extend to the edges of the x-axis. The x-label must be indicated by x. The y-label must be indicated by the label Counts. The bins (aside from the first) must be right inclusive. (10 marks)
+
+```{r}
+x = c(0.2, 0.25, 0.1, 0.7, 0.6, 0.6, 0.61, 0.8)
+hist(x,
+     breaks = seq(from = min(x), to = max(x), length.out = 5),
+     xlab = 'x',
+     ylab = 'Counts')
+```
+
