@@ -1,0 +1,151 @@
+---
+title: "Midterm Q2"
+author: "Yufei Yin"
+output: pdf_document
+---
+
+# Question 2: Database
+
+Consider the database in the file `stat240.sqlite` provided in this midterm archive. This database contains a table named **citiesA** containing the area of cities and a table named **citiesP** containing the population of cities. This question has 4 parts, which must all be completed. For each part, provide code and output in a single *pdf* file through *crowdmark*. Provide axis-lables and titles for all of your plots.
+
+# Question 2, Part I
+
+Connect to the database in the file `stat240.sqlite` and output the names of the tables in the database. For each table, output the names of the columns of the table and the data types of the columns and the number of entries in the table.
+
+\bigskip
+
+```{r}
+library(RSQLite)
+library(DBI)
+dbcon = dbConnect(SQLite(), dbname="stat240.sqlite")
+```
+
+## The names of the tables
+
+```{r}
+dbListTables(dbcon)
+Locations = dbReadTable(dbcon, "Locations")
+citiesA = dbReadTable(dbcon, "citiesA")
+citiesP = dbReadTable(dbcon, "citiesP")
+```
+
+\bigskip
+
+## The names of the columns of the table
+
+```{r}
+names(Locations)
+names(citiesA)
+names(citiesP)
+```
+
+\bigskip
+
+## The data types of the columns
+
+```{r}
+str(Locations)
+str(citiesA)
+str(citiesP)
+```
+
+"num": numeric
+
+"chr": character
+
+"int": integer
+
+\bigskip
+
+## The number of entries in the table
+
+```{r}
+dim(Locations)[1]*dim(Locations)[2]
+dim(citiesA)[1]*dim(citiesP)[2]
+dim(citiesP)[1]*dim(citiesP)[2]
+```
+
+\newpage
+
+# Question 2, Part II
+
+Use *SQL* to extract the unique combinations of **province** and **type** from the **citiesP** table, and provide the number of such unique combinations.
+
+\bigskip
+
+##  The unique combinations of province and type from the citiesP table
+
+```{r}
+sql = "SELECT DISTINCT province, type FROM citiesP"
+dbGetQuery(dbcon, sql)
+```
+
+\bigskip
+
+## The number of such unique combinations
+
+```{r}
+dim(dbGetQuery(dbcon, sql))[1]
+```
+
+\newpage
+
+# Question 2, Part III
+
+Use *SQL* to obtain the number of municipalities within each province in the database. Restrict to location names that are present in both **citiesA** and **citiesP** tables. Provide a plot of the number of resulting municipalities from each province.
+
+
+```{r}
+sql = "SELECT name, 
+              province, 
+              COUNT(province) AS count 
+       FROM(SELECT * FROM citiesP 
+            INNER JOIN citiesA 
+            ON 
+             citiesP.name = citiesA.name) 
+       GROUP BY province"
+dbGetQuery(dbcon, sql)
+```
+
+```{r, message=FALSE}
+# plot
+library(tidyverse)
+sql = "SELECT province 
+       FROM(SELECT * FROM citiesP 
+            INNER JOIN citiesA 
+            ON 
+             citiesP.name = citiesA.name)" 
+province = dbGetQuery(dbcon, sql)
+
+ggplot(data = province, aes(y = fct_infreq(province), color = province, fill = province)) + 
+  geom_bar() +
+  labs(x = "Count", y = "",title = "The number of municipalities from each province")
+```
+
+\newpage
+
+# Question 2, Part IV
+
+For each location in the **citiesP** table, the columns **rank2011** and **rank2016** represent the popularity of the destination with tourists in the years 2011 and 2016 respectively (the tourist rank orders). Extract the tourist rank order for 2011 (**rank2011**) and for 2016 (**rank2016**) for each location in the **citiesP** table. Provide a scatter plot of the 2011 values against the 2016 values (i.e., a plot with one point per location and the 2011 values on the y-axis and the 2016 values on the x-axis).
+
+```{r, warning=FALSE}
+sql = "SELECT rank2011, rank2016, name, province FROM citiesP WHERE rank2011 != 'NR'"
+rank <- dbGetQuery(dbcon, sql)
+plot(x = rank$rank2016, 
+     y = rank$rank2011,
+     xlab = "rank2016",
+     ylab = "rank2011",
+     main = "scatter plot of the 2011 values against the 2016 values")
+```
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,195 @@
+---
+title: "Midterm Q3"
+author: "Yufei Yin"
+output: pdf_document
+---
+
+# Question 3: Project
+
+Consider the Best New Albums section of the popular music site Pitchfork. Write an R function to retrieve the text of a review of an album, and also the rating that the reviewer gives to the album (on the scale 0.0 to 10.0). Provide a function named pitchfork which takes a single parameter: a URL specified by a string. When this function is passed the URL to a review of an album in the Best New Albums section of Pitchfork, the pitchfork function should return a list with two elements: 
+
+1) an element named text with value given by the body of the review as a character string (with all HTML removed),
+
+2) an element named rating with value given by the decimal value of the review, as a numeric. You can find URLs for these reviews
+by navigating to [https://pitchfork.com/reviews/best/albums/](https://pitchfork.com/reviews/best/albums/) and right clicking on an album and then selecting something like Copy Link.
+
+Example usage follows. In this listing, the ellipsis indicates cropped R output.
+
+# Question 3: Part I
+
+Provide a pdf containing all of the code that you wrote for this project. If your code spans multiple files, put all of the code into a single pdf and use comments to indicate the beginning of the files and the file names. You may use code from outside sources in your project provided that it is released under an open license and provided that you clearly indicate the code with comments.
+
+```{r,message=FALSE}
+library(httr)
+library(stringr)
+library(rvest)
+
+pitchfork = function(url){
+  
+  df = data.frame(text = NA,
+                  rating = NA)
+  
+  # text
+  text = read_html(url) %>%   
+    html_nodes(".dropcap p") %>%
+    html_text()
+  
+  df$text = str_c(text, collapse = "\n\n")
+  
+  # rating
+  s = GET(url)
+  s = content(s, "text")
+  # remove space
+  s1 = str_replace_all(s, "[[:space:]]", "")
+  # match
+  match = str_match_all(s1, "<spanclass=\"score\">(.*?)</span>")
+  
+  df$rating = as.numeric(match[[1]][1,2])
+  
+  return(df)
+}
+```
+
+\newpage
+
+# Question 3: Part II
+
+Write a short report (in prose) arguing that the code you've provided works as required and provide a pdf of the report. Include output of R sessions in labeled figures. Provide some example calls of your implementation of the pitchfork function.
+
+\bigskip
+
+  We are asked to apply web scraping by writing a function called **pitchfork()**. **pitchfork()** will take url as parameter, and return a data frame that contains "text" stands for album review text, and "rating" stands for the rate of the album.
+  
+  We first use `data.frame()` function to build an empty data frame. The data frame has two columns: text, rating. Then, we use `read_html()`, pipe with `html_nodes()` and `html_text()` to extract the plain text. The output is a vector. Each element of this vector is one paragraph of the review article, so we use `str_c()` to concatenate them into one single string, and store it in the  data frame. Moreover, we will extract album rating. we use `GET()` and `content()` to get the HTML source page, then use regular expression to get the rating, and store it in our data frame. Finally, our function should return the data frame.
+  
+  After writing the **pichfork()** function, we need to test whether it works as required.
+  
+## Test 1
+
+### rating
+```{r}
+url = 'https://pitchfork.com/reviews/albums/jeff-parker-suite-for-max-brown/'
+review = pitchfork(url)
+review$rating
+```
+
+![Jeff Parker Rating](D:/Simon Fraser University/2021 spring/STAT 240/midterm/Jeff Parker Rating.png)
+  
+  The rating from our function is the same as the website.
+
+\bigskip
+
+### text
+
+```{r, eval=FALSE}
+cat(review$text)
+```
+
+  The output is too long, so we only show a few paragraphs from the beginning.
+  
+![Jeff Parker text](D:/Simon Fraser University\2021 spring\STAT 240\midterm\Jeff Parker text.png)
+  
+![Jeff Parker first paragraph](D:/Simon Fraser University\2021 spring\STAT 240\midterm\Jeff Parker first paragraph.png)
+
+  As we can see, the first paragraph from the website is the same as our function output.
+  
+\newpage
+  
+  We will try a different url to further test our function.
+  
+## Test 2
+
+### rating
+```{r}
+url = 'https://pitchfork.com/reviews/albums/20390-to-pimp-a-butterfly/'
+review = pitchfork(url)
+review$rating
+```
+  
+![Kendrick Lamar Rating](D:/Simon Fraser University\2021 spring\STAT 240\midterm\Kendrick Lamar Rating.png)
+  
+### text
+
+```{r, eval=FALSE}
+cat(review$text)
+```
+
+\bigskip
+
+![Kendrick Lamar text](D:/Simon Fraser University\2021 spring\STAT 240\midterm\Kendrick Lamar text.png)
+  
+![Kendrick Lamar first paragraph](D:/Simon Fraser University\2021 spring\STAT 240\midterm\Kendrick Lamar first paragraph.png)
+
+\bigskip
+  
+  Again, we obtain the same data from the website.
+  
+\newpage
+
+## Final test
+
+  Finally, we create a vector contains 4 url of Kanye west's albums, and use for loop to store all the data frame from **pitchfork()** function to a list called `kanye_west`, and test if the data are the same as the website.
+  
+  
+![Kanye's 4 albums](D:/Simon Fraser University\2021 spring\STAT 240\midterm\Kanye's 4 albums.png)
+
+\bigskip
+
+```{r}
+url = c('https://pitchfork.com/reviews/albums/21542-the-life-of-pablo/',
+        'https://pitchfork.com/reviews/albums/18172-kanye-west-yeezus/',
+        'https://pitchfork.com/reviews/albums/15725-watch-the-throne/',
+        'https://pitchfork.com/reviews/albums/14880-my-beautiful-dark-twisted-fantasy/')
+
+kanye_west = vector(mode = "list", length = length(url))
+name = vector(mode = "character", length = length(url))
+
+for (i in seq_along(url)){
+  kanye_west[[i]] = pitchfork(url[i])
+  
+  # extract album name
+  match = str_match_all(url, "-(.*)/")
+  name[i] = match[[i]][1,2]
+}
+names(kanye_west) = name
+```
+
+\newpage
+
+### The 4th album "My Beautiful Dark Twisted Fantasy" rating
+
+```{r}
+kanye_west[[4]]$rating
+```
+
+\bigskip
+
+![Kanye West MBDTF rating](D:/Simon Fraser University\2021 spring\STAT 240\midterm\Kanye West MBDTF rating.png)
+  
+\bigskip
+
+### The 4th album "My Beautiful Dark Twisted Fantasy" text
+
+```{r,eval=FALSE}
+cat(kanye_west[[4]]$text)
+```
+
+\bigskip
+
+![Kanye west MBDTF text](D:/Simon Fraser University\2021 spring\STAT 240\midterm\Kanye west MBDTF text.png)
+  
+\bigskip
+![Kanye west MBDTF first paragraph](D:/Simon Fraser University\2021 spring\STAT 240\midterm\Kanye west MBDTF first paragraph.png)
+
+\bigskip
+![kanye west list](D:/Simon Fraser University\2021 spring\STAT 240\midterm\Kanye west list.png)
+
+\newpage
+
+  we only showed the output of the "My Beautiful Dark Twisted Fantasy" album here, but the other albums' outputs are also the same as the website.
+
+\bigskip
+
+  According to all the test results above, I am confident that **pitchfork()** function satisfies the requirements which are extract plain text and rating from the website.
+  
+  
