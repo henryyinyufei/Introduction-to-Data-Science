@@ -1,0 +1,27 @@
+---
+title: "Problem3"
+author: "Yufei Yin"
+output: pdf_document
+---
+
+```{r, echo = FALSE}
+library(RSQLite)
+dbcon = dbConnect(SQLite(), dbname="D:\\Simon Fraser University\\2021 spring\\STAT 240\\Labs\\lab2\\lab02.sqlite")
+```
+
+# Question 3a, (2 points): 
+
+Build an SQL query that joins both the 'zip' and the 'tickets' tables on the 'zip_code' field, and restricts the results to tickets where the fine_level1_amount is more than $100. What is the sum of the latitudes of all of the records in this query? 
+
+Note that this sum should not include records for which the latitude is not recorded. 
+
+```{r}
+sql_qry = "SELECT * FROM zip
+              INNER JOIN tickets ON
+                zip.zip_code = tickets.zip_code
+              WHERE 
+                fine_level1_amount > 100"
+join_zip_tickets = dbGetQuery(dbcon, sql_qry)
+sum(join_zip_tickets$latitude, na.rm = TRUE)
+```
+

@@ -1,0 +1,59 @@
+---
+title: "Problem1"
+author: "Yufei Yin"
+output: pdf_document
+---
+
+```{r, echo = FALSE}
+library(RSQLite)
+dbcon = dbConnect(SQLite(), dbname="D:\\Simon Fraser University\\2021 spring\\STAT 240\\Labs\\lab2\\lab02.sqlite")
+```
+
+# Question 1a, (3 points): 
+
+What are the column names of the data table 'zip' in the lab02.sqlite database?
+
+```{r}
+names(dbReadTable(dbcon, "zip"))
+```
+
+# Question 1b, (3 points): 
+
+What are the last 5 records in the data table 'CA'? You can use the commands 'head' and 'tail' to print the first or last resp. records of a data table.
+
+```{r}
+tail(dbReadTable(dbcon, "CA"), n = 5)
+```
+
+# Question 1c, (3 points): 
+
+What are the last 3 records of the data table `POP2011'? 
+
+```{r}
+tail(dbReadTable(dbcon, "POP2011"), n = 3)
+```
+
+# Question 1d, (3 points): 
+
+How many records are in the data table `POP2006'?
+
+```{r}
+dim(dbReadTable(dbcon, "POP2006"))[1]
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

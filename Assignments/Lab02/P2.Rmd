@@ -1,0 +1,25 @@
+---
+title: "Problem2"
+author: "Yufei Yin"
+output: pdf_document
+---
+
+```{r, echo=FALSE}
+library(RSQLite)
+dbcon = dbConnect(SQLite(), dbname="D:\\Simon Fraser University\\2021 spring\\STAT 240\\Labs\\lab2\\lab02.sqlite")
+```
+
+# Question 2a, (3 points): 
+
+Build a query that selects the city names, states and zipcodes from the `zip' for the state of Illinois. 
+
+(Hint: Print the column names and then try to identify the exact column names before building the SQL query. You may need to figure out the 2 letter state code.) 
+
+How many records are returned by this query?
+
+```{r}
+names(dbReadTable(dbcon, "zip"))
+sql_qry = "SELECT zip_code, city, state FROM zip WHERE state == 'IL'"
+dim(dbGetQuery(dbcon, sql_qry))[1]
+```
+

@@ -1,0 +1,53 @@
+---
+title: "Problem4"
+author: "Yufei Yin"
+output: pdf_document
+---
+
+```{r, echo = FALSE}
+library(RSQLite)
+dbcon = dbConnect(SQLite(), dbname="D:\\Simon Fraser University\\2021 spring\\STAT 240\\Labs\\lab2\\lab02.sqlite")
+```
+
+# Question 4a, (6 points): 
+
+Plot the locations on the Canadian map where Population in 2006 is less than the last five digits of your student id number. Make your query and plot your locations as points on your map using data obtained by your SQL query and other plotting tools from last lab. Submit your result as a .pdf file of the plot (remember to title the plot). 
+
+Hint: after plotting using the above code, you may overlay points with this command: 
+
+points(x=longitude, y=latitude, col='red', pch=16), where longitude and latitude are vectors of longitudes and latitudes resp.
+
+```{r}
+names(dbReadTable(dbcon, "POP2006"))
+names(dbReadTable(dbcon, "CA"))
+```
+
+```{r}
+# STUDENT ID NUMBER :301318252
+sql_qry = "SELECT * FROM CA
+              INNER JOIN POP2006 ON
+                POP2006.Geographic_name = CA.Geographic_name
+              WHERE
+                Population__2006 < 18252"
+join_CA_POP2006 = dbGetQuery(dbcon, sql_qry)
+```
+
+```{r, message=FALSE, warning=FALSE}
+library(rworldmap)
+worldmap = getMap(resolution = "high")
+NrthAm = worldmap[which(worldmap$REGION=="North America"),]
+plot(NrthAm, 
+     col = "white", 
+     bg = "lightblue",
+     main = "The locations on the Canadian map \n where Population in 2006 is less than 18252",
+     xlim = c(-140,-55), 
+     ylim = c(40,85))
+points(x = join_CA_POP2006$Longitude, 
+       y = join_CA_POP2006$Latitude, 
+       col = "red",
+       pch = 16)
+```
+
+
+
+
