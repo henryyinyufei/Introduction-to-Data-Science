@@ -1,0 +1,98 @@
+---
+title: "Problem2"
+author: "Yufei Yin"
+output: pdf_document
+---
+
+# Question 2a, (4 points): 
+
+Plot the locations of all of the pokemon in the Vanpoke table provided in the previous lab, overlayed on a map of Vancouver. Provide the resulting graphic. The following code segment may be useful:
+
+```{r, echo=FALSE}
+library(RSQLite)
+dbcon = dbConnect(RSQLite::SQLite(),
+                  dbname="D:\\Simon Fraser University\\2021 spring\\STAT 240\\Labs\\lab3\\lab03.sqlite")
+poke = dbGetQuery(dbcon, "SELECT * FROM Vanpoke")
+```
+
+```{r, warning=FALSE, message=FALSE}
+library(rworldmap)
+library(rworldxtra)
+```
+
+```{r, fig.width = 7, fig.height = 7}
+worldmap = getMap(resolution = "high")
+NrthAm = worldmap[which(worldmap$REGION =="North America"),]
+plot(NrthAm, 
+     xlim=c(-123.35,-122.65),
+     ylim=c(49,49.35), 
+     main = "Pokemon in Vancouver")
+points(poke$longitude,poke$latitude,pch='.')
+```
+
+\newpage
+
+# Question 2b, (6 points): 
+
+Make a two dimensional density plot with contours of the pokemon locations and overlay it onto a map of Vancouver, and provide the graphic. The following functions may be useful: kde2d, and contour. These functions are provided in the libraries MASS and sp.
+
+```{r}
+library(MASS)
+library(sp)
+```
+
+```{r, fig.width = 7, fig.height = 7}
+worldmap = getMap(resolution = "high")
+NrthAm = worldmap[which(worldmap$REGION =="North America"),]
+plot(NrthAm, 
+     xlim=c(-123.35,-122.65),
+     ylim=c(49,49.35), 
+     main = "Pokemon in Vancouver")
+points(poke$longitude,poke$latitude,pch='.')
+
+# new
+est2 = kde2d(poke$longitude,poke$latitude,n = c(121,150))
+contour(est2, add=TRUE,col=2,lwd=3)
+```
+
+\newpage
+
+# Question 2c, (2 points): 
+
+In three sentences or fewer, answer these questions: Where are the peaks of this two dimensional density plot? Why are the peaks in those locations?
+
+\bigskip
+
+It's a level curve because each contour line presents a level. Similar to topographic maps, the peaks should be the innermost points of these loops. These points could be local minimum or local maximum.
+
+\newpage
+
+# Question 2d, (2 bonus points): 
+
+Provide a graphic of the contour plot constructed in Question 2c, but with a more detailed depiction of Vancouver.
+
+```{r}
+query = "SELECT AVG(longitude) AS Avglon,
+                AVG(latitude) AS Avglat,
+                city
+          FROM Vanpoke
+          Group by city"
+location = dbGetQuery(dbcon, query)
+```
+
+
+```{r, fig.width = 7, fig.height = 7}
+worldmap = getMap(resolution = "high")
+NrthAm = worldmap[which(worldmap$REGION =="North America"),]
+plot(NrthAm, 
+     xlim=c(-123.35,-122.65),
+     ylim=c(49,49.35), 
+     main = "Pokemon in Vancouver")
+points(poke$longitude,poke$latitude,pch='.')
+est2 = kde2d(poke$longitude,poke$latitude,n = c(121,150))
+contour(est2, add=TRUE,col=2,lwd=3)
+
+# new
+text(location$Avglon, location$Avglat, location$city, col = "blue")
+```
+
