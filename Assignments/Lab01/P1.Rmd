@@ -1,0 +1,53 @@
+---
+title: "Problem 1"
+author: "Yufei Yin"
+output: pdf_document
+---
+
+# Problem 1
+
+Let's try this out but first let's tell R to put 4 plots on one figure. Specifically you should make one plot with each of the options for the `type' parameter listed above. Each plot should also have a different main title clearly specifying which option you used and what it stands for. Each plot should have different values of col and lwd. Make sure that you label the x and y axes appropriately.
+
+## Question 1a, (6 points): 
+
+Provide a .pdf of this plot.                                                                                    
+
+## Question 1b, (1 point): 
+
+provide the R code you used to make this plot.
+
+```{r}
+radius = c(1,3,5,7)
+volume = 4/3*pi*radius^3
+par(mfrow=c(2,2))
+plot(radius,volume,main="Volume vs. Radius points plot",
+     xlab="radius",
+     ylab="volume",
+     ylim=c(0,1500),xlim=c(-1,9),
+     col="red",
+     lwd=1,
+     type = "p")
+plot(radius,volume,main="Volume vs. Radius line plot",
+     xlab="radius",
+     ylab="volume",
+     ylim=c(0,1500),xlim=c(-1,9),
+     col="black",
+     lwd=2,
+     type = "l")
+plot(radius,volume,main="Volume vs. radius \n point and line plot",
+     xlab="radius",
+     ylab="volume",
+     ylim=c(0,1500),xlim=c(-1,9),
+     col="blue",
+     lwd=3,
+     type = "b")
+plot(radius,volume,main="Volume vs. radius not plotting",
+     xlab="radius",
+     ylab="volume",
+     ylim=c(0,1500),xlim=c(-1,9),
+     col="orange",
+     lwd=4,
+     type = "n")
+```
+
+

@@ -1,0 +1,51 @@
+---
+title: "Problem4"
+author: "Yufei Yin"
+output: pdf_document
+---
+
+# Problem 4
+
+## Question 4a, (2 points): 
+Find the names of the Pokemon which are taller then 2 meters and are Legendary.                                                 
+
+(Hint: it's usually wise to first extract several columns of data to make sure your code does what you think it does.) 
+
+Provide these names with one name per line.
+
+
+```{r, echo=FALSE}
+poke = read.csv(file = "D:/Simon Fraser University/2021 spring/STAT 240/Labs/lab1/pokemon_2019.csv",header=TRUE,sep = ",")
+```
+
+```{r}
+poke[poke$Height_m > 2 & poke$isLegendary == "True","Name"]
+```
+
+## Question 4b, (6 points): 
+Let's extract two body styles of Pokemon. We'll restrict this question to just pokemon with two body styles: 'head_arms' and 'serpentine_body'. 
+
+Plot the Attack vs Defense of any Pokemon that has those body style (with 'head arms' on the x axis and 'serpentine body' on the y axis). 
+
+Upload a .pdf of this plot. 
+
+Hint: it's usually wise to first extract several columns of data to make sure your code does what you think it does. Here especially as you are using compound criteria.
+
+```{r}
+sub_poke = poke[,c("Attack","Defense","Body_Style")]
+df = sub_poke[sub_poke$Body_Style == "head_arms" | sub_poke$Body_Style == "serpentine_body",]
+head_arms = sub_poke[sub_poke$Body_Style == "head_arms",]
+serpentine_body = sub_poke[sub_poke$Body_Style == "serpentine_body",]
+plot(df$Attack, df$Defense,
+     main = "Defense vs. Attack",
+     xlab = "Attack",
+     ylab = "Defense",
+     xlim = c(0,150),
+     ylim = c(0,210))
+points(head_arms, col="red")
+points(serpentine_body, col="blue")
+legend(x = "topleft", col = c("red","blue"), pch = c(1,1), c("head arms", "serpentine body"))
+```
+
+
+
