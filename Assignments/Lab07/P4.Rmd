@@ -1,0 +1,88 @@
+---
+title: "Problem 4"
+author: "Yufei Yin"
+output: pdf_document
+---
+
+# Question 4
+
+Modify an app from the Shiny App for data visualization from the gallery here: https://shiny.rstudio.com/gallery/ so that the dataset used is different (5 marks). 
+
+Remember to change units and axis labels and titles, where appropriate. You can use your own dataset, or any dataset of your choice.
+You may choose one of the datasets on the UCI Machine Learning repository: https://archive.ics.uci.edu/ml/index.php
+
+Provide a short description of your app, provide the code, and provide a few screenshots of your app working.
+
+\bigskip
+
+## ui.R
+```{r,eval=FALSE}
+# k-means only works with numerical variables,
+# so don't give the user the option to select
+# a categorical variable
+
+poke = read.csv('pokemon_2019.csv')
+poke = poke[,c(5:11,20,21)]
+vars = names(poke)
+
+pageWithSidebar(
+  headerPanel('Pokemon k-means clustering'),
+  sidebarPanel(
+    selectInput('xcol', 'X Variable', vars),
+    selectInput('ycol', 'Y Variable', vars, selected = vars[[2]]),
+    numericInput('clusters', 'Cluster count', 3, min = 1, max = 9)
+  ),
+  mainPanel(
+    plotOutput('plot1')
+  )
+)
+```
+
+## server.R
+```{r,eval=FALSE}
+function(input, output, session) {
+  
+  poke = read.csv('pokemon_2019.csv')
+  
+  # Combine the selected variables into a new data frame
+  selectedData <- reactive({
+    poke[, c(input$xcol, input$ycol)]
+  })
+  
+  clusters <- reactive({
+    kmeans(selectedData(), input$clusters)
+  })
+  
+  output$plot1 <- renderPlot({
+    palette(c("#E41A1C", "#377EB8", "#4DAF4A", "#984EA3",
+              "#FF7F00", "#FFFF33", "#A65628", "#F781BF", "#999999"))
+    
+    par(mar = c(5.1, 4.1, 0, 1))
+    plot(selectedData(),
+         col = clusters()$cluster,
+         pch = 20, cex = 3)
+    points(clusters()$centers, pch = 4, cex = 4, lwd = 4)
+  })
+  
+}
+
+```
+
+\bigskip
+
+This app demonstrates the cluster analysis of pokemon dataset we used in previous labs. The method of cluster analysis we applied in this app is kmeans.
+
+## output screenshots
+
+![](D:/Simon Fraser University\2021 spring\STAT 240\Assignments\Lab07\Q4_1.png)
+
+![](D:/Simon Fraser University\2021 spring\STAT 240\Assignments\Lab07\Q4_2.png)
+
+![](D:/Simon Fraser University\2021 spring\STAT 240\Assignments\Lab07\Q4_3.png)
+
+## Browser
+
+[https://shiny.rcg.sfu.ca/u/yya175/myapp](https://shiny.rcg.sfu.ca/u/yya175/myapp)
+
+
+
