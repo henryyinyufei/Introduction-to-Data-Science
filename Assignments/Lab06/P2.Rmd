@@ -1,0 +1,50 @@
+---
+title: "Problem 2"
+author: "Yufei Yin"
+output: pdf_document
+---
+
+# Question 2
+
+Write a short report (in prose) arguing that the code you've provided works as required and provide a pdf of the report. Include output of R sessions in labelled figures: You could show the translink function being called with different arguments, and show the corresponding elements of the data list proving that correct bus routes are returned. You could also show that for a given element of the data list, parameters to the translink function can be specified in order to return that affected bus route. (5 points)
+
+```{r,message=FALSE}
+source('translink.R')
+```
+
+# test 1
+
+```{r}
+disruptions = translink(2020, 1, 26, 3)
+disruptions$start
+disruptions$stop
+```
+```{r}
+disruptions$df$text
+disruptions$df$date
+```
+
+\bigskip
+
+There are 3 tweets posted at the time we specified (2020-01-26 3 o'clock), from first tweet we noticed that bus 23 is resuming regular route, and from second and third tweets we know that bus 406 and 401 start detouring. 
+
+# test 2
+
+```{r}
+disruptions = translink(2020, 1, 28, 1)
+disruptions$start
+disruptions$stop
+```
+
+```{r}
+disruptions$df$text
+disruptions$df$date
+```
+
+From 3rd tweet, bus 335/345/375 detours are cleared, and all the other tweets are bus start detouring. interestingly, bus 335/345/375
+start and stop detouring within 1 hour.
+
+According to the test above, i am confidence my function works well, but i can not 100% sure it will extract exactly what we want; however, it will work in most of the case since i have considered lots of situations. For example, i considered lower case upper case, i considered multiple bus number in the same tweet, and special bus number (start with R and N) etc.
+
+
+
